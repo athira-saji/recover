@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthcare Recommendation System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e4f1fe;
+            margin: 0;
+            padding: 0;
+        }
+        .menu {
+            background-color: #34495e;
+            display: flex;
+            justify-content: space-evenly;
+            padding: 10px 0;
+        }
+        .menu a {
+            color: #e4f1fe;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 10px 15px;
+        }
+        .menu a:hover {
+            text-decoration: underline;
+        }
+        .home {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .home img {
+            width: 40%;
+            max-width: 350px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        .website-name {
+            font-size: 50px;
+            font-weight: bold;
+            color: #34495e;
+            margin-bottom: 10px;
+            font-family: Alegreya;
+        }
+        .home h1 {
+            color: #34495e;
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+        .home p {
+            color: #22313f;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        #about {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 40px;
+            max-width: 1000px;
+            margin: auto;
+        }
+        #about .about-text {
+            color: #22313f;
+            width: 50%;
+        }
+        #about .about-text h2 {
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+        #about .about-text p {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        #about img {
+            width: 50%;
+            max-width: 450px;
+            border-radius: 10px;
+        }
+        #about-footer {
+            display: flex;
+            align-items: center; /* Aligns text and icon vertically */
+            justify-content: center; /* Centers content */
+            gap: 10px; /* Adds space between text and icon */
+            font-size: 20px;
+            color: #34495e;
+        }
+
+        #about-footer .material-symbols-outlined {
+            font-size: 24px; /* Adjust icon size */
+            display: inline-block; /* Ensures it's inline */
+            color: #34495e;
+        }
+        .icon-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #e4f1fe;
+            color: #e4f1fe;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .icon-button .material-symbols-outlined {
+            font-size: 30px;
+        }
+
+        .icon-button:hover {
+            background-color: #8dc6ff;
+        }
+        #contact h2 {
+            font-size: 30px;
+            margin-bottom: 10px;
+            color: #22313f;
+            padding-left: 280px;
+        }
+
+        @media (max-width: 768px) {
+            .menu {
+                flex-direction: column;
+                align-items: center;
+            }
+            .home img {
+                width: 60%;
+                max-width: 250px;
+            }
+            .home h1 {
+                font-size: 24px;
+            }
+            .home p {
+                font-size: 16px;
+            }
+            #about {
+                flex-direction: column;
+                text-align: center;
+            }
+            #about .about-text, #about img {
+                width: 100%;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="menu">
+        <a href="login.html">Login</a>
+        <a href="signup.html">Sign Up</a>
+        <a href="#about">About</a>
+    </div>
+    
+    <div class="home">
+        <img src="imgs/logo.png" alt="Healthcare Image">
+        <div class="website-name">Recover</div>
+        <h1>Your Life Matters, So Your Health Does Too.</h1>
+        <p>Find the best healthcare recommendations tailored just for you.</p>
+    </div>
+    
+    <div id="about">
+        <div class="about-text">
+            <h2>About Us</h2>
+            <p>Discover a new way to take charge of your health with <cite>Recover</cite>, the ultimate healthcare recommendation platform designed to connect you with trusted providers and facilities. Whether you're seeking a specialist, nearby clinic, or wellness resources, we offer personalized recommendations tailored to your unique needs. Our platform features verified professionals and easy appointment booking to make your healthcare journey seamless and stress-free. We empower you to make informed decisions for a healthier, happier life. Your health deserves the best, and we're here to help you every step of the way.</p>
+        </div>
+        <img src="imgs/aboutsection.png" alt="About Us Image">
+    </div>
+    <div id="about-footer">
+        <p>Start taking control of your health from today</p>
+        <a href="signup.html" class="icon-button">
+            <span class="material-symbols-outlined">start</span>
+        </a>
+    </div> 
+</body>
+</html>

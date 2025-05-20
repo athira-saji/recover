@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Calculators</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+        body { font-family: 'Poppins', sans-serif; text-align: center; background-color: #f2f2f2; color: black; padding: 20px; }
+        .tabs { display: flex; justify-content: center; margin-bottom: 20px; gap: 10px; }
+        .tab { padding: 10px 20px; cursor: pointer; border-radius: 25px; background: #61d0d6e0; color: white; font-weight: bold; font-size: 16px; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .tab:hover, .tab.active { background: #4bb1b6; transform: scale(1.1); }
+        .content { display: none; padding: 20px; border-radius: 15px; background: white; color: black; box-shadow: 0px 10px 20px rgba(0,0,0,0.3); margin: 10px auto; width: 90%; max-width: 400px; transition: 0.3s ease-in-out; }
+        .content.active { display: block; animation: fadeIn 0.5s ease-in-out; }
+        input, select, button { padding: 12px; margin: 8px 0; width: 90%; border-radius: 25px; border: none; font-size: 16px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+        input, select { background: #f1f1f1; }
+        button { background: #61d0d6e0; color: white; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        button:hover { background: #4bb1b6; transform: scale(1.1); }
+        .chart-container { width: 100%; max-width: 350px; margin: auto; }
+        p { font-size: 18px; font-weight: bold; color: #333; }
+        .quote { font-size: 20px; font-weight: bold; margin: 20px 0; color: #007bff; }
+        .header-image { width: 80px; margin-bottom: 10px; }
+        h1 { background-color: #a1d6d9; padding: 15px; border-radius: 10px; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <img class="header-image" src="https://cdn-icons-png.flaticon.com/512/2920/2920325.png" alt="Health Icon">
+    <h1>🌟 Health Calculators 🌟</h1>
+    <p class="quote">“Take care of your body. It’s the only place you have to live.” – Jim Rohn</p>
+    <div class="tabs">
+        <div class="tab active" onclick="switchTab(event, 'bmi')">BMI</div>
+        <div class="tab" onclick="switchTab(event, 'calories')">Calories</div>
+    </div>
+    
+    <div id="bmi" class="content active">
+        <h2>BMI Calculator</h2>
+        <input type="number" id="height" placeholder="Height (cm)">
+        <input type="number" id="weight" placeholder="Weight (kg)">
+        <button onclick="calculateBMI()">Calculate BMI</button>
+        <p id="bmiResult">Enter values to see BMI</p>
+        <div class="chart-container"><canvas id="bmiChart"></canvas></div>
+    </div>
+    
+    <div id="calories" class="content">
+        <h2>Calorie Calculator</h2>
+        <input type="number" id="age" placeholder="Age">
+        <input type="number" id="weightCal" placeholder="Weight (kg)">
+        <input type="number" id="heightCal" placeholder="Height (cm)">
+        <button onclick="calculateCalories()">Calculate Calories</button>
+        <p id="calorieResult">Enter values to calculate</p>
+        <div class="chart-container"><canvas id="calorieChart"></canvas></div>
+    </div>
+    
+    <script>
+        function switchTab(event, tabId) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.content').forEach(content => content.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        function calculateBMI() {
+            let height = document.getElementById('height').value / 100;
+            let weight = document.getElementById('weight').value;
+            if (height && weight) {
+                let bmi = (weight / (height * height)).toFixed(2);
+                document.getElementById('bmiResult').innerText = `Your BMI: ${bmi}`;
+                drawBMIChart(bmi);
+            }
+        }
+
+        function drawBMIChart(bmi) {
+            let ctx = document.getElementById('bmiChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Underweight', 'Normal', 'Overweight', 'Obese'],
+                    datasets: [{
+                        label: 'BMI Category',
+                        data: [bmi < 18.5 ? bmi : 0, (bmi >= 18.5 && bmi < 25) ? bmi : 0, (bmi >= 25 && bmi < 30) ? bmi : 0, bmi >= 30 ? bmi : 0],
+                        backgroundColor: ['#36a2eb', '#4bc0c0', '#ffce56', '#ff6384']
+                    }]
+                }
+            });
+        }
+
+        function calculateCalories() {
+            let age = document.getElementById('age').value;
+            let weight = document.getElementById('weightCal').value;
+            let height = document.getElementById('heightCal').value;
+            if (age && weight && height) {
+                let calories = (10 * weight + 6.25 * height - 5 * age + 5).toFixed(2);
+                document.getElementById('calorieResult').innerText = `Calories Needed: ${calories} kcal/day`;
+                drawCalorieChart(calories);
+            }
+        }
+
+        function drawCalorieChart(calories) {
+            let ctx = document.getElementById('calorieChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Sedentary', 'Lightly Active', 'Moderately Active', 'Very Active'],
+                    datasets: [{
+                        label: 'Calories Needed',
+                        data: [calories * 1.2, calories * 1.375, calories * 1.55, calories * 1.725],
+                        backgroundColor: ['#ff6384', '#36a2eb', '#ffce56', '#4bc0c0']
+                    }]
+                }
+            });
+        }
+    </script>
+</body>
+</html>

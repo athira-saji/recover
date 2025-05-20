@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medicine Lookup</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #a1d6d9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 400px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        #result {
+            margin-top: 15px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background: #e4f1fe;
+            text-align: left;
+            display: none;
+        }
+
+        .medicine-card {
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .medicine-card:last-child {
+            border-bottom: none;
+        }
+
+        .medicine-name {
+            font-weight: bold;
+            font-size: 18px;
+            color: #007bff;
+        }
+
+        .medicine-info {
+            font-size: 14px;
+            color: #333;
+            margin-top: 5px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Medicine Lookup</h1>
+        <p>Search for a medicine to see its details.</p>
+
+        <input type="text" id="search-box" placeholder="Enter medicine name..." oninput="searchMedicine()">
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Expanded medicine dataset with Dolo-650 included
+        const medicines = [
+            {
+                name: "Dolo-650",
+                usage: "Used to treat fever and mild to moderate pain.",
+                sideEffects: "May cause nausea, liver issues if overdosed.",
+                dosage: "650mg every 6-8 hours, not exceeding 4 doses a day."
+            },
+            {
+                name: "Paracetamol",
+                usage: "Used to treat fever and mild pain.",
+                sideEffects: "May cause nausea, allergic reactions.",
+                dosage: "500mg every 4-6 hours as needed."
+            },
+            {
+                name: "Ibuprofen",
+                usage: "Used for pain relief, inflammation, and fever.",
+                sideEffects: "May cause stomach pain, dizziness.",
+                dosage: "200-400mg every 6-8 hours."
+            },
+            {
+                name: "Cetirizine",
+                usage: "Used for allergy relief, hay fever.",
+                sideEffects: "May cause drowsiness, dry mouth.",
+                dosage: "10mg once daily."
+            },
+            {
+                name: "Amoxicillin",
+                usage: "Used for bacterial infections.",
+                sideEffects: "May cause nausea, diarrhea.",
+                dosage: "500mg every 8 hours for 7-10 days."
+            },
+            {
+                name: "Aspirin",
+                usage: "Used for pain relief, fever, and inflammation.",
+                sideEffects: "May cause stomach irritation, bleeding.",
+                dosage: "300-600mg every 4-6 hours."
+            },
+            {
+                name: "Omeprazole",
+                usage: "Used for acid reflux and ulcers.",
+                sideEffects: "May cause headache, nausea.",
+                dosage: "20mg once daily before meals."
+            },
+            {
+                name: "Azithromycin",
+                usage: "Used for bacterial infections.",
+                sideEffects: "May cause nausea, diarrhea.",
+                dosage: "500mg once daily for 3 days."
+            },
+            {
+                name: "Doxycycline",
+                usage: "Used for bacterial infections and acne treatment.",
+                sideEffects: "May cause sun sensitivity, stomach upset.",
+                dosage: "100mg twice daily."
+            },
+            {
+                name: "Losartan",
+                usage: "Used to treat high blood pressure.",
+                sideEffects: "May cause dizziness, fatigue.",
+                dosage: "50mg once daily."
+            },
+            {
+                name: "Atorvastatin",
+                usage: "Used to lower cholesterol.",
+                sideEffects: "May cause muscle pain, headache.",
+                dosage: "10-80mg once daily."
+            },
+            {
+                name: "Prednisone",
+                usage: "Used to reduce inflammation in conditions like arthritis and allergies.",
+                sideEffects: "May cause weight gain, mood changes.",
+                dosage: "5-60mg daily, depending on condition."
+            }
+        ];
+
+        function searchMedicine() {
+            let query = document.getElementById("search-box").value.toLowerCase();
+            let resultDiv = document.getElementById("result");
+
+            if (query === "") {
+                resultDiv.style.display = "none";
+                return;
+            }
+
+            let filteredMedicines = medicines.filter(med => med.name.toLowerCase().includes(query));
+
+            if (filteredMedicines.length > 0) {
+                resultDiv.style.display = "block";
+                resultDiv.innerHTML = filteredMedicines.map(med => `
+                    <div class="medicine-card">
+                        <p class="medicine-name">${med.name}</p>
+                        <p class="medicine-info"><strong>Usage:</strong> ${med.usage}</p>
+                        <p class="medicine-info"><strong>Side Effects:</strong> ${med.sideEffects}</p>
+                        <p class="medicine-info"><strong>Dosage:</strong> ${med.dosage}</p>
+                    </div>
+                `).join("");
+            } else {
+                resultDiv.style.display = "block";
+                resultDiv.innerHTML = `<p>No medicine found. Try another search.</p>`;
+            }
+        }
+
+    </script>
+</body>
+</html>

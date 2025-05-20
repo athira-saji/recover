@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Symptom Checker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #a1d6d9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 400px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        select, input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        button {
+            background: #61d0d6e0;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 48%;
+        }
+
+        button:hover {
+            background: #78f2f8e0;
+        }
+
+        #clear-btn {
+            background: #dc3545;
+        }
+
+        #clear-btn:hover {
+            background: #c82333;
+        }
+
+        #loading {
+            margin-top: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #007bff;
+            display: none;
+        }
+
+        #result {
+            margin-top: 15px;
+            font-weight: bold;
+            color: #333;
+            text-align: left;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            display: none;
+            background: #e4f1fe;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Symptom Checker</h1>
+        <p>Select or enter symptoms to receive general health advice.</p>
+
+        <form id="symptom-form">
+            <label for="symptom-dropdown">Select Symptoms:</label>
+            <select id="symptom-dropdown" multiple>
+                <option value="fever">Fever</option>
+                <option value="cough">Cough</option>
+                <option value="fatigue">Fatigue</option>
+                <option value="headache">Headache</option>
+                <option value="sore throat">Sore Throat</option>
+                <option value="runny nose">Runny Nose</option>
+            </select>
+
+            <label for="manual-symptoms">Or Type Symptoms (comma-separated):</label>
+            <input type="text" id="manual-symptoms" placeholder="E.g., nausea, dizziness">
+
+            <div class="button-group">
+                <button type="button" id="check-btn">Check Symptoms</button>
+                <button type="button" id="clear-btn">Clear</button>
+            </div>
+        </form>
+
+        <div id="loading">Checking symptoms...</div>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById("check-btn").addEventListener("click", checkSymptoms);
+            document.getElementById("clear-btn").addEventListener("click", clearForm);
+        });
+
+        function checkSymptoms() {
+            let dropdownSymptoms = Array.from(document.getElementById("symptom-dropdown").selectedOptions).map(option => option.value);
+            let manualSymptoms = document.getElementById("manual-symptoms").value.toLowerCase().split(',').map(s => s.trim());
+
+            let allSymptoms = [...dropdownSymptoms, ...manualSymptoms].filter(s => s !== "");
+
+            let conditions = {
+                "Flu": { 
+                    symptoms: ["fever", "cough", "sore throat", "runny nose"],
+                    advice: "Drink plenty of fluids, rest, and take paracetamol if needed.",
+                    severity: "Moderate"
+                },
+                "Migraine": { 
+                    symptoms: ["headache", "fatigue"],
+                    advice: "Stay in a dark room, reduce screen time, and stay hydrated.",
+                    severity: "Mild"
+                },
+                "Common Cold": { 
+                    symptoms: ["runny nose", "sore throat"],
+                    advice: "Drink warm liquids, use steam therapy, and rest.",
+                    severity: "Mild"
+                },
+                "Food Poisoning": { 
+                    symptoms: ["nausea", "vomiting", "stomach pain"],
+                    advice: "Stay hydrated, eat light meals, and avoid dairy.",
+                    severity: "Severe"
+                },
+                "COVID-19": { 
+                    symptoms: ["fever", "cough", "fatigue", "sore throat"],
+                    advice: "Isolate, wear a mask, and seek medical advice if symptoms worsen.",
+                    severity: "Severe"
+                }
+            };
+
+            let possibleConditions = [];
+            let healthAdvice = "";
+
+            for (let condition in conditions) {
+                if (conditions[condition].symptoms.some(symptom => allSymptoms.includes(symptom))) {
+                    possibleConditions.push(condition);
+                    healthAdvice += `<li><strong>${condition} (${conditions[condition].severity})</strong>: ${conditions[condition].advice}</li>`;
+                }
+            }
+
+            let resultDiv = document.getElementById("result");
+            let loadingDiv = document.getElementById("loading");
+
+            if (allSymptoms.length > 0) {
+                resultDiv.style.display = "none";
+                loadingDiv.style.display = "block";
+
+                setTimeout(() => {
+                    loadingDiv.style.display = "none";
+                    resultDiv.style.display = "block";
+                    resultDiv.innerHTML = `
+                        <h3>Your Symptoms:</h3>
+                        <p>${allSymptoms.join(", ")}</p>
+                        <h3>Possible Conditions:</h3>
+                        <ul>${healthAdvice || "<li>Stay hydrated and rest. Consult a doctor if symptoms persist.</li>"}</ul>
+                    `;
+                }, 1500);
+            } else {
+                resultDiv.style.display = "block";
+                resultDiv.innerHTML = `<p>Please enter or select symptoms.</p>`;
+            }
+        }
+
+        function clearForm() {
+            let select = document.getElementById("symptom-dropdown");
+            Array.from(select.options).forEach(option => option.selected = false);
+
+            document.getElementById("manual-symptoms").value = "";
+            document.getElementById("result").style.display = "none";
+        }
+    </script>
+</body>
+</html>

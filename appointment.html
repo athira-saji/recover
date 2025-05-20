@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointment Booking</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: linear-gradient(to right, #e4f1fe, #acb6e5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 50%;
+            color: #22313f;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #22313f;
+        }
+
+        label, input, select {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+            color: #22313f;
+        }
+
+        input, select {
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            width: calc(100% - 24px);
+        }
+
+        button {
+            background-color: #22313f;
+            color: white;
+            border: none;
+            padding: 12px;
+            cursor: pointer;
+            width: 100%;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #8dc6ff;
+            color: #22313f;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Book an Appointment</h1>
+        <form id="appointmentForm">
+            <label for="name">Name:</label>
+            <input type="text" id="name" required>
+
+            <label for="contact">Contact:</label>
+            <input type="text" id="contact" required>
+
+            <label for="date">Preferred Date:</label>
+            <input type="date" id="date" required>
+
+            <label for="time">Preferred Time:</label>
+            <input type="time" id="time" required>
+
+            <label for="specialty">Specialty:</label>
+            <select id="specialty" required>
+                <option value="">Select Specialty</option>
+                <option value="Cardiology">Cardiology</option>
+                <option value="Dermatology">Dermatology</option>
+                <option value="Neurology">Neurology</option>
+                <option value="Pediatrics">Pediatrics</option>
+            </select>
+
+            <label for="doctor">Doctor’s Name:</label>
+            <select id="doctor" required>
+                <option value="">Select a Doctor</option>
+                <option value="Dr. Smith">Dr. Smith</option>
+                <option value="Dr. Johnson">Dr. Johnson</option>
+                <option value="Dr. Lee">Dr. Lee</option>
+            </select>
+
+            <button type="submit">Book Appointment</button>
+        </form>
+        <p id="confirmationMessage" style="color: #22313f; font-size: 16px; display: none;">Appointment booked successfully!</p>
+    </div>
+
+    <script>
+        document.getElementById("appointmentForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const name = document.getElementById("name").value;
+            const contact = document.getElementById("contact").value;
+            const date = document.getElementById("date").value;
+            const time = document.getElementById("time").value;
+            const specialty = document.getElementById("specialty").value;
+            const doctor = document.getElementById("doctor").value;
+
+            if (name.length < 2) {
+                alert("Name must be at least 2 letters long.");
+                return;
+            }
+
+            const selectedDate = new Date(date + "T" + time);
+            const now = new Date();
+
+            if (selectedDate < now) {
+                alert("Please select a future date and time.");
+                return;
+            }
+
+            if (date === now.toISOString().split('T')[0]) {
+                const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
+                if (selectedDate < oneHourLater) {
+                    alert("Appointments must be booked at least 1 hour in advance.");
+                    return;
+                }
+            }
+
+            const appointment = { name, contact, date, time, specialty, doctor };
+
+            let appointments = JSON.parse(localStorage.getItem("appointments")) || [];
+            appointments.push(appointment);
+            localStorage.setItem("appointments", JSON.stringify(appointments));
+
+            document.getElementById("confirmationMessage").style.display = "block";
+            document.getElementById("appointmentForm").reset();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Two Column Login Form</title>
+  <STYLE>
+    /* styles.css */
+
+/* Reset default margin and padding */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Basic page setup */
+body, html {
+  height: 100%;
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #a1d6d9;
+}
+
+/* Container that holds the two columns */
+.container {
+  display: flex;
+  width: 80%; /* Adjust based on your preference */
+  max-width: 1000px;
+  height: 500px; /* You can adjust this to fit your design */
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+/* Both columns should shrink together */
+.form-column, .image-column {
+    flex: 1; /* Allows both columns to shrink and expand equally */
+    min-width: 300px; /* Prevents them from becoming too small */
+}
+
+/* Left column with the form */
+.form-column {
+  width: 50%;
+  padding: 40px;
+  background-color: #fff; /* White background for the form */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+h2 {
+  margin-bottom: 20px;
+  font-size: 24px;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  background-color: #61d0d6e0;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #78f2f8e0;
+}
+
+/* Sign up link styling */
+.signup-link {
+  margin-top: 15px;
+  font-size: 14px;
+  color: #555;
+}
+
+audio {
+  width: 100%;
+  margin-top: 10px;
+ }
+
+.signup-link a {
+  color: #61d0d6e0;
+  text-decoration: none;
+}
+
+.signup-link a:hover {
+  text-decoration: underline;
+}
+
+/* Right column with an image */
+.image-column {
+  width: 50%;
+  background-color: #f2f2f2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.image-column img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Responsive Design: Stacking columns on small screens */
+@media (max-width: 600px) {
+  .container {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .form-column,
+  .image-column {
+    min-width: 200px;
+  }
+
+  .image-column img {
+    width: 100%;
+    height: auto;
+  }
+}
+
+  </STYLE>
+</head>
+<body>
+  <div class="container">
+    <!-- Left column with form -->
+    <div class="form-column">
+      <h2>Login
+        <video width="80" height="80" autoplay loop muted>
+            <source src="imgs/docvid.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </h2>
+    
+      <form action="login.php" method="POST">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" required>
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required>
+
+        <button type="submit">Login</button>
+      </form>
+
+      <!-- Sign up link -->
+      <p class="signup-link">Don't have an account? <a href="signup.html">Sign up now</a></p>
+      <audio controls>
+        <source src="imgs/synthesize.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+      </audio>
+    </div>
+    
+
+    <!-- Right column with image or extra content -->
+    <div class="image-column">
+      <img src="imgs/loginpic.jpg" alt="Background Image">
+    </div>
+  </div>
+  <script>
+    document.querySelector("#loginForm").addEventListener("submit", function (e) {
+        e.preventDefault(); // Prevent default form submission
+
+        let formData = new FormData(this);
+
+        fetch("login.php", {
+            method: "POST",
+            body: formData
+        })
+        .then(response => response.json()) // Parse JSON response
+        .then(data => {
+            if (data.success) {
+                alert(data.message); // Show success message
+                window.location.href = data.redirect; // Redirect to dashboard.php
+            } else {
+                alert(data.message); // Show error message
+            }
+        })
+        .catch(error => console.error("Error:", error));
+    });
+</script>
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor & Hospital Finder - Manaswini</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; padding: 0; background-color: #a1d6d9; }
+        .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
+        input, button { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ccc; border-radius: 4px; }
+        button { background-color: #61d0d6e0; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #78f2f8e0; }
+        #map { width: 100%; height: 300px; margin-top: 20px; border-radius: 8px; }
+        #results { margin-top: 20px; }
+        .result-item { background: #e9ecef; padding: 10px; margin: 5px 0; border-radius: 4px; }
+        .result-item button { margin-top: 5px; background-color: #61d0d6e0; border: none; padding: 5px; cursor: pointer; }
+        .result-item button:hover { background-color: #78f2f8e0; }
+        
+        @media (max-width: 600px) {
+            .container { padding: 15px; }
+        }
+
+        .fade-in {
+            opacity: 0;
+            animation: fadeIn 1s ease-in forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container fade-in">
+        <h2>Doctor & Hospital Finder</h2>
+        <input type="text" id="location" placeholder="Enter your location">
+        <button onclick="getLocation()">Use My Location</button>
+        <button onclick="searchHospitals()">Find Hospitals</button>
+        <div id="map"></div>
+        <div id="results"></div>
+    </div>
+
+    <script>
+        let userLat, userLon;
+
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition, showError);
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+
+        function showPosition(position) {
+            userLat = position.coords.latitude;
+            userLon = position.coords.longitude;
+            updateMap(userLat, userLon);
+            fetchHospitals(userLat, userLon);
+        }
+
+        function showError(error) {
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    alert("User denied the request for Geolocation.");
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    alert("Location information is unavailable.");
+                    break;
+                case error.TIMEOUT:
+                    alert("The request to get user location timed out.");
+                    break;
+                case error.UNKNOWN_ERROR:
+                    alert("An unknown error occurred.");
+                    break;
+            }
+        }
+
+        function searchHospitals() {
+            const location = document.getElementById('location').value;
+            if (!location) {
+                alert("Please enter a location.");
+                return;
+            }
+
+            fetch(`https://nominatim.openstreetmap.org/search?q=${location}&format=json&limit=1`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length === 0) {
+                        alert("Location not found. Try again.");
+                        return;
+                    }
+                    userLat = parseFloat(data[0].lat);
+                    userLon = parseFloat(data[0].lon);
+                    updateMap(userLat, userLon);
+                    fetchHospitals(userLat, userLon);
+                })
+                .catch(error => console.error("Error fetching location:", error));
+        }
+
+        function updateMap(lat, lon) {
+            document.getElementById('map').innerHTML = `<iframe width="100%" height="300" 
+                src="https://www.openstreetmap.org/export/embed.html?bbox=${lon-0.05},${lat-0.05},${lon+0.05},${lat+0.05}&layer=mapnik"></iframe>`;
+        }
+
+        function fetchHospitals(lat, lon) {
+            const overpassQuery = `
+                [out:json];
+                (
+                    node["amenity"="hospital"](around:5000,${lat},${lon});
+                    node["healthcare"="clinic"](around:5000,${lat},${lon});
+                );
+                out;
+            `;
+
+            fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(overpassQuery)}`)
+                .then(response => response.json())
+                .then(data => displayResults(data.elements))
+                .catch(error => console.error("Error fetching hospitals:", error));
+        }
+
+        function displayResults(hospitals) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = "";
+
+            if (!hospitals || hospitals.length === 0) {
+                resultsDiv.innerHTML = "<p>No hospitals found nearby.</p>";
+                return;
+            }
+
+            hospitals.forEach(hospital => {
+                const name = hospital.tags.name || "Unknown Hospital";
+                const lat = hospital.lat;
+                const lon = hospital.lon;
+
+                const div = document.createElement("div");
+                div.className = "result-item";
+                div.innerHTML = `<strong>${name}</strong><br>
+                                 <button onclick="openGoogleMaps(${lat}, ${lon})">Get Directions</button>`;
+                resultsDiv.appendChild(div);
+            });
+        }
+
+        function openGoogleMaps(lat, lon) {
+            window.open(`https://www.google.com/maps?q=${lat},${lon}`);
+        }
+    </script>
+</body>
+</html>

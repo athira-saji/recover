@@ -1,0 +1,178 @@
+<!<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthcare Articles</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f2f2f2;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+        header {
+            background: #a1d6d9;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+        .search-bar {
+            margin: 20px;
+            text-align: center;
+        }
+        .search-bar input, .search-bar select {
+            padding: 10px;
+            font-size: 16px;
+            margin: 5px;
+        }
+        .articles {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: flex-start;
+            align-items: stretch;
+        }
+        .article {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            width: 30%; /* Adjust to avoid too many items per row */
+            min-height: 300px; /* Ensure uniform height */
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* Ensures the buttons stay at the bottom */
+        }
+
+        .article:hover {
+            transform: scale(1.05);
+        }
+        .article img {
+            width: 100%;
+            border-radius: 8px;
+        }
+        .article h3 {
+            margin: 10px 0;
+        }
+        .buttons {
+            margin-top: auto; /* Push buttons to the bottom */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .buttons button {
+            padding: 8px 12px;
+            border: none;
+            cursor: pointer;
+            background: #61d0d6e0;
+            color: white;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Healthcare Articles</h1>
+    </header>
+    <div class="search-bar">
+        <input type="text" id="search" placeholder="Search articles..." oninput="filterArticles()">
+        <select id="categoryFilter" onchange="filterArticles()">
+            <option value="all">All Categories</option>
+            <option value="Nutrition">Nutrition</option>
+            <option value="Fitness">Fitness</option>
+            <option value="SkinCare">SkinCare</option>
+            <option value="Weight Loss">Weight Loss</option>
+            <option value="Sleep & Recovery">Sleep & Recovery</option>
+            <option value="Meditation">Meditation</option>
+            <option value="Haircare">HairCare</option>
+            <option value="High Blood Pressure">High BP</option>
+            <option value="Diabetes">Diabetes</option>
+            <option value="Common Cold">Common Cold</option>
+            <option value="Digestion Issues">Digestion Issues</option>
+            <option value="Healthcare">Healthcare</option>
+        </select>
+    </div>
+    <div class="container">
+        <div class="articles" id="articles"></div>
+    </div>
+    <script>
+        const articles = [
+            { title: "The Importance of Hydration", image: "imgs/img1.jpg", category: "Nutrition", url: "https://www.ncoa.org/article/10-reasons-why-hydration-is-important/" },
+            { title: "Benefits of Intermittent Fasting", image: "imgs/img2.jpg", category: "Nutrition", url: "https://www.healthline.com/nutrition/10-health-benefits-of-intermittent-fasting" },
+            { title: "Superfoods for Better Health", image: "imgs/img3.jpg", category: "Nutrition", url: "https://www.healthline.com/nutrition/true-superfoods" },
+            { title: "How to Meal Prep Effectively", image: "imgs/img4.jpg", category: "Nutrition", url: "https://www.easyanddelish.com/how-to-meal-prep/" },
+            { title: "10-minute Morning Yoga Routine", image: "imgs/img5.jpg", category: "Fitness", url: "https://www.doyou.com/a-10-minute-morning-yoga-sequence-for-beginners/" },
+            { title: "Best Exercises for Beginners", image: "imgs/img6.jpg", category: "Fitness", url: "https://www.thehealthy.com/exercise/exercises-for-beginners/" },
+            { title: "Cardio Workouts for Weight Loss", image: "imgs/img7.jpg", category: "Fitness", url: "https://www.prevention.com/fitness/workouts/a46129702/cardio-for-weight-loss/" },
+            { title: "Stretching for Flexibility", image: "imgs/img8.jpg", category: "Fitness", url: "https://www.self.com/gallery/essential-stretches-slideshow" },
+            { title: "Tips for Acne Prevention", image: "imgs/img9.jpg", category: "SkinCare", url: "https://www.webmd.com/skin-problems-and-treatments/acne/10-tips-for-preventing-pimples" },
+            { title: "Anti-Aging Skincare Tips", image: "imgs/img10.jpg", category: "SkinCare", url: "https://www.health.com/beauty/best-anti-aging-tips" },
+            { title: "Meditation for Stress Relief", image: "imgs/img11.jpeg", category: "Meditation", url: "https://www.thedailymeditation.com/stress-2" },
+            { title: "Benefits of Daily Meditation", image: "imgs/img12.jpg", category: "Meditation", url: "https://www.healthline.com/nutrition/12-benefits-of-meditation" },
+            { title: "Guided Meditation for Beginners", image: "imgs/img13.jpg", category: "Meditation", url: "https://www.lovejoyandwonder.com/guided-meditations-for-beginners/" },
+            { title: "Healthy Diet for Weight Loss", image: "imgs/img14.jpg", category: "Weight Loss", url: "https://www.healthifyme.com/blog/best-indian-diet-plan-weight-loss/" },
+            { title: "Exercises to Burn Fat", image: "imgs/img15.jpg", category: "Weight Loss", url: "https://www.healthshots.com/fitness/weight-loss/fat-burning-exercises/" },
+            { title: "Weight Loss Myths Debunked", image: "imgs/img16.jpg", category: "Weight Loss", url: "https://www.hindustantimes.com/lifestyle/health/6-common-weight-loss-myths-busted-expert-explains-the-reasoning-behind-popular-claims-101741947621265.html" },
+            { title: "Sustainable Weight Loss Methods", image: "imgs/img17.jpg", category: "Weight Loss", url: "https://www.healthline.com/health/weight-loss/sustainable-weight-loss" },
+            { title: "Haircare Tips for Healthy Hair", image: "imgs/img18.jpg", category: "Haircare", url: "https://www.goodhousekeeping.com/beauty/hair/a28494129/healthy-hair/" },
+            { title: "Best Oils for Hair Growth", image: "imgs/img19.jpg", category: "Haircare", url: "https://www.ayurvedicindia.info/ayurvedic-oils-for-hair-list-of-top-10-oils-for-hair-growth/" },
+            { title: "Avoiding Hair Damage", image: "imgs/img20.jpg", category: "Haircare", url: "https://www.aad.org/public/everyday-care/hair-scalp-care/hair/habits-that-damage-hair" },
+            { title: "Natural Hair Treatments", image: "imgs/img21.jpg", category: "Haircare", url: "https://helloglow.co/homemade-hair-treatments/" },
+            { title: "Improving Sleep Quality", image: "imgs/img22.jpg", category: "Sleep & Recovery", url: "https://www.healthline.com/nutrition/17-tips-to-sleep-better" },
+            { title: "Best Sleeping Positions", image: "imgs/img23.jpg", category: "Sleep & Recovery", url: "https://www.verywellhealth.com/best-and-worst-sleep-positions-for-health-conditions-4158271" },
+            { title: "How to Avoid Indigestion & Bloating", image: "imgs/img24.jpg", category: "Digestion Issues", url: "https://www.teladoc.com/health-talk/ten-tips-to-prevent-tips-to-get-rid-of-indigestion-naturally/" },
+            { title: "Symptoms & Treatment for Common Cold", image: "imgs/img25.jpg", category: "Common Cold", url: "https://www.1mg.com/diseases/common-cold-589?wpsrc=Bing+Organic+Search" },
+            { title: "How to Prevent Colds in Winter", image: "imgs/img26.jpg", category: "Common Cold", url: "https://steptohealth.com/prevent-a-cold-in-the-winter/" },
+            { title: "Home Remedies for Cold and Flu", image: "imgs/img27.jpg", category: "Common Cold", url: "https://www.healthline.com/health/natural-flu-remedies#water-and-fluids" },
+            { title: "Understanding Type 2 Diabetes", image: "imgs/img28.jpg", category: "Diabetes", url: "https://www.healthline.com/health/type-2-diabetes" },
+            { title: "Diabetes Management: Diet & Lifestyle", image: "imgs/img29.jpg", category: "Diabetes", url: "https://www.mayoclinic.org/diseases-conditions/diabetes/in-depth/diabetes-management/art-20047963" },
+            { title: "Early Signs of Diabetes You Shouldn't Ignore", image: "imgs/img30.jpg", category: "Diabetes", url: "https://medical-news.org/early-warning-signs-of-pre-diabetes-you-shouldnt-ignore/65502/" },
+            { title: "How to Control High Blood Pressure Naturally", image: "imgs/img31.jpg", category: "High Blood Pressure", url: "https://www.medicalnewstoday.com/articles/318716" },
+            { title: "Importance of Preventive Healthcare", image: "imgs/img32.jpg", category: "Healthcare", url: "https://cflhealthandwellness.com/importance-of-preventive-healthcare/" }
+
+        ];
+        
+        function displayArticles(filteredArticles = articles) {
+            const articleContainer = document.getElementById('articles');
+            articleContainer.innerHTML = '';
+            filteredArticles.forEach((article, index) => {
+                articleContainer.innerHTML += `
+                    <div class="article">
+                        <img src="${article.image}" alt="${article.title}">
+                        <h3>${article.title}</h3>
+                        <p><strong>Category:</strong> ${article.category}</p>
+                        <div class="buttons">
+                            <a href="${article.url}" target="_blank"><button>Read More</button></a>
+                            <button onclick="bookmarkArticle(${index})"><i class="fa fa-bookmark"></i></button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        
+        function filterArticles() {
+            const searchInput = document.getElementById('search').value.toLowerCase();
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            
+            const filteredArticles = articles.filter(article => {
+                const matchesCategory = categoryFilter === 'all' || article.category === categoryFilter;
+                const matchesSearch = article.title.toLowerCase().includes(searchInput);
+                return matchesCategory && matchesSearch;
+            });
+            
+            displayArticles(filteredArticles);
+        }
+        
+        displayArticles();
+    </script>
+</body>
+</html>
